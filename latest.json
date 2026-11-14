@@ -1,9 +1,9 @@
 {
-  "versionCode": 9,
-  "versionName": "1.3.4",
-  "notes": "Исправление кодировки интерфейса (русские строки на главной, серверах, настройках, в диалогах и уведомлениях).",
-  "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.4/AegisVPN-1.3.4-arm64-v8a.apk",
-  "arm64Sha256": "4a0633ac0cce179da1f11444565b5f5e76e1829c0f44b2140600b75fa41386e3",
-  "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.4/AegisVPN-1.3.4-armeabi-v7a.apk",
-  "armeabiV7aSha256": "41a18ed6f2ff014bf30648d24fff4fff300ac9e31bcc49def5d20f3d36c11615"
+  "versionCode": 10,
+  "versionName": "1.3.5",
+  "notes": "Исправление кодировки интерфейса: вкладка «Приложения» и остальные экраны (включая сборки arm64-v8a и armeabi-v7a).",
+  "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.5/AegisVPN-1.3.5-arm64-v8a.apk",
+  "arm64Sha256": "ed337bc74be536202c0477e76805d20955a676226deb859ccdeb4df761f5ddad",
+  "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.5/AegisVPN-1.3.5-armeabi-v7a.apk",
+  "armeabiV7aSha256": "4fb91747bd3d3f12e763c2a2694ddf76a3efaf35afeda239d41834c66faa8f2a"
 }
