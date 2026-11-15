@@ -1,7 +1,7 @@
 {
-    "version":  "1.1.0",
-    "versionCode":  2,
-    "notes":  "Desktop 1.1.0: автообновление в приложении, автоподключение (приложения/домены) с предустановками, автозапуск, трей, улучшенный UI (стиль Android), авто-переход на прокси при недоступности TUN/конфликте портов, исправления кодировки/запуска/поиска Java.",
-    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.0/AegisVPN-Desktop-1.1.0-windows-x64.zip",
-    "sha256":  "ac4fbd643de33773251bc77ed5880c8465746508cb421b9598422792b122bcc9"
+    "version":  "1.1.1",
+    "versionCode":  3,
+    "notes":  "Desktop 1.1.1: исправлена кодировка — описания релизов на GitHub и имена серверов в приложении; подписки теперь читаются в UTF-8, повреждённые имена автоматически восстанавливаются при загрузке; улучшен поиск Java при запуске.",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.1/AegisVPN-Desktop-1.1.1-windows-x64.zip",
+    "sha256":  "edae653b8238de4b4b9d4717c059c3bf3e12ccbb32235cdf8dc312e0d99fdcca"
 }
