@@ -1,7 +1,7 @@
 {
-    "version":  "1.1.1",
-    "versionCode":  3,
-    "notes":  "Desktop 1.1.1: исправлена кодировка — описания релизов на GitHub и имена серверов в приложении; подписки теперь читаются в UTF-8, повреждённые имена автоматически восстанавливаются при загрузке; улучшен поиск Java при запуске.",
-    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.1/AegisVPN-Desktop-1.1.1-windows-x64.zip",
-    "sha256":  "edae653b8238de4b4b9d4717c059c3bf3e12ccbb32235cdf8dc312e0d99fdcca"
+    "version":  "1.1.2",
+    "versionCode":  4,
+    "notes":  "Desktop 1.1.2: при запуске автоматически останавливает zapret-discord (служба zapret / процесс winws.exe), чтобы DPI-обход не конфликтовал с TUN-адаптером Aegis VPN; исправления кодировки из 1.1.1 сохранены.",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.2/AegisVPN-Desktop-1.1.2-windows-x64.zip",
+    "sha256":  "13c4e3f58d7a7e3afbddbbe861d2fbc03f2988eb140d45c1918dff00ee61bb89"
 }
