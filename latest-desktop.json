@@ -1,7 +1,7 @@
 {
-    "version":  "1.1.2",
-    "versionCode":  4,
-    "notes":  "Desktop 1.1.2: при запуске автоматически останавливает zapret-discord (служба zapret / процесс winws.exe), чтобы DPI-обход не конфликтовал с TUN-адаптером Aegis VPN; исправления кодировки из 1.1.1 сохранены.",
-    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.2/AegisVPN-Desktop-1.1.2-windows-x64.zip",
-    "sha256":  "13c4e3f58d7a7e3afbddbbe861d2fbc03f2988eb140d45c1918dff00ee61bb89"
+    "version":  "1.1.3",
+    "versionCode":  5,
+    "notes":  "Desktop 1.1.3: новая иконка приложения и трея (тёмный щит с мятным «A»), новый значок ярлыков Aegis VPN; обработка zapret-discord и исправления кодировки сохранены.",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.3/AegisVPN-Desktop-1.1.3-windows-x64.zip",
+    "sha256":  "963c908dd5b276d694c111c4488abda00077b3a854eb31af0d98a663c9eb54dd"
 }
