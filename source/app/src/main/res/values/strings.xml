@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aegis VPN</string>
+    <string name="channel_vpn_name">VPN-соединение</string>
+    <string name="channel_vpn_desc">Состояние защищённого соединения</string>
+    <string name="channel_watch_name">Автоподключение</string>
+    <string name="channel_watch_desc">Переключение VPN по правилам приложений</string>
+    <string name="channel_watch_text">VPN включается вместе с выбранными приложениями</string>
+    <string name="tile_label">Aegis VPN</string>
+    <string name="tile_connected">Подключено</string>
+    <string name="tile_connecting">Подключение…</string>
+    <string name="tile_disconnecting">Отключение…</string>
+    <string name="tile_disconnected">Отключено</string>
+    <string name="notif_connecting">Подключение…</string>
+    <string name="notif_connected">Защищено</string>
+    <string name="notif_disconnected">Отключено</string>
+</resources>

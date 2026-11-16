@@ -1,0 +1,7 @@
+{
+    "version":  "1.1.5",
+    "versionCode":  7,
+    "notes":  "Desktop 1.1.5: убрана светлая системная рамка вокруг окна — больше нет белой линии по краю на тёмном фоне; заголовок окна окрашен в цвет приложения.",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.5/AegisVPN-Desktop-1.1.5-windows-x64.zip",
+    "sha256":  "5196115d69212be1f2d3783e85b006cd02acef0a8456a511bc329c5237d444c0"
+}

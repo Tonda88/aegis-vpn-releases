@@ -1,0 +1,50 @@
+# === Build output ===
+build/
+.gradle/
+.kotlin/
+out/
+*.log
+*.exit
+dist/
+*.hprof
+local.properties
+
+# === IDE ===
+.idea/
+*.iml
+.vscode/
+
+# === Secrets ===
+keystore.properties
+*.jks
+*.p12
+*.pfx
+*.keystore
+subscription-keys.txt
+.env
+.env.*
+
+# === Release artifacts (published via GitHub Releases / aegis-vpn-releases) ===
+APK/
+release-v1.*-upload/
+release-desktop-v*/
+stage/
+
+# === Binaries and large assets (не храним в git) ===
+*.apk
+*.zip
+*.exe
+*.dll
+*.aar
+*.msi
+*.pdb
+*.so
+
+# === Desktop staged installs ===
+desktop/AegisVPN-Desktop/
+desktop/AegisVPN-Installer/
+
+# === OS noise ===
+Thumbs.db
+desktop.ini
+.DS_Store
