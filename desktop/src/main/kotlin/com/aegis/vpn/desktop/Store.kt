@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.desktop
+package com.aegis.vpn.desktop
 
 import com.aegis.vpn.config.ConfigParser
 import com.aegis.vpn.config.Mojibake
@@ -58,7 +58,10 @@ class Store {
             }
         }
         if (repaired) {
-            runCatching { file.writeText(gson.toJson(loaded)) }
+            runCatching {
+                dir.mkdirs()
+                file.writeText(gson.toJson(loaded))
+            }
         }
         return loaded
     }

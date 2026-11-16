@@ -1,7 +1,7 @@
 {
-  "version": "1.1.5",
-  "versionCode": 7,
-  "notes": "Desktop 1.1.5: убрана светлая системная рамка вокруг окна — больше нет белой линии по краю на тёмном фоне; заголовок окна окрашен в цвет приложения.",
-  "url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.5/AegisVPN-Desktop-1.1.5-windows-x64.zip",
-  "sha256": "5196115d69212be1f2d3783e85b006cd02acef0a8456a511bc329c5237d444c0"
+    "version":  "1.1.7",
+    "versionCode":  9,
+    "notes":  "Desktop 1.1.7: флаги новых стран в списке серверов (Чехия, Австрия, Эстония, Швеция, Финляндия) и аккуратные подписи; авто-переподключение при смене сервера, исправленные названия и чистое окно без светлой рамки — всё в этой сборке.",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.7/AegisVPN-Desktop-1.1.7-windows-x64.zip",
+    "sha256":  "729476680eea1b6407a82cbec40b4908acd8aaacb636617a5b46ad28d35e371c"
 }

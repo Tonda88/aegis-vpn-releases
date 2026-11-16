@@ -9,8 +9,8 @@ import java.net.URL
 import java.security.MessageDigest
 
 object DesktopUpdater {
-    const val APP_VERSION = "1.1.5"
-    const val APP_VERSION_CODE = 7
+    const val APP_VERSION = "1.1.7"
+    const val APP_VERSION_CODE = 9
     const val LATEST_JSON_URL = "https://raw.githubusercontent.com/Tonda88/aegis-vpn-releases/main/latest-desktop.json"
 
     data class ReleaseInfo(
@@ -112,3 +112,4 @@ object DesktopUpdater {
         return md.digest().joinToString("") { "%02x".format(it) }
     }
 }
+

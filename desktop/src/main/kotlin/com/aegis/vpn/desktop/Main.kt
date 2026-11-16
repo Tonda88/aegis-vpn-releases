@@ -182,7 +182,19 @@ private fun findPolishScript(): File? {
     candidates += File(cwd, "tools/polish-window.ps1")
     candidates += File(cwd, "polish-window.ps1")
     candidates += File(cwd, "desktop/tools/polish-window.ps1")
-    return candidates.firstOrNull { it.isFile }
+    candidates.firstOrNull { it.isFile }?.let { return it }
+    // Installed builds (MSI/EXE) ship the helper inside the jar: unpack it once
+    // next to the app data so the frame polish also works there.
+    return runCatching {
+        val target = File(System.getenv("APPDATA") ?: System.getProperty("user.home"), "AegisVPN-Desktop/polish-window.ps1")
+        if (!target.isFile) {
+            target.parentFile?.mkdirs()
+            VpnEngine::class.java.getResourceAsStream("/polish-window.ps1")?.use { input ->
+                target.outputStream().use { output -> input.copyTo(output) }
+            }
+        }
+        target.takeIf { it.isFile }
+    }.getOrNull()
 }
 
 private fun isProcessRunning(triggers: Set<String>): Boolean {
@@ -247,6 +259,11 @@ private fun countryCode(name: String): String {
         n.contains("сингапур") || n.contains("singapore") -> "SG"
         n.contains("гонконг") || n.contains("hong kong") -> "HK"
         n.contains("канад") || n.contains("canada") -> "CA"
+        n.contains("чехи") || n.contains("czech") -> "CZ"
+        n.contains("австри") || n.contains("austria") -> "AT"
+        n.contains("эстони") || n.contains("estonia") -> "EE"
+        n.contains("швеци") || n.contains("sweden") -> "SE"
+        n.contains("финлянди") || n.contains("finland") -> "FI"
         else -> ""
     }
 }
@@ -375,6 +392,28 @@ fun App(store: Store, engine: VpnEngine, onHideToTray: () -> Unit, onExit: () ->
 
     // keep engine domains in sync
     LaunchedEffect(autoDomains) { engine.proxyDomains = autoDomains }
+
+    // Reconnect when another server is picked while the tunnel is up or broken:
+    // the running sing-box keeps the previous profile, so switching the list
+    // selection alone used to leave the app connected to a dead endpoint.
+    var reconnectFromId by remember { mutableStateOf(selectedId) }
+    LaunchedEffect(selectedId) {
+        val target = selectedId
+        if (target == null || target == reconnectFromId) {
+            reconnectFromId = target
+            return@LaunchedEffect
+        }
+        reconnectFromId = target
+        val st = engine.state.value.status
+        if (st == VpnStatus.CONNECTED || st == VpnStatus.CONNECTING || st == VpnStatus.ERROR) {
+            val profile = servers.firstOrNull { it.id == target } ?: return@LaunchedEffect
+            engine.disconnect()
+            delay(350)
+            engine.proxyDomains = autoDomains
+            engine.connect(profile)
+            msg = "Переключено на «${displayName(profile.name)}» — переподключаюсь"
+        }
+    }
 
     fun checkUpdates(manual: Boolean = false) {
         if (updateChecking) return
@@ -2252,6 +2291,34 @@ private fun CountryFlag(name: String, size: Dp) {
                         drawRect(Color(0xFFD22B3F), size = Size(w * 0.26f, h))
                         drawRect(Color(0xFFD22B3F), topLeft = Offset(w * 0.74f, 0f), size = Size(w * 0.26f, h))
                         drawCircle(Color(0xFFD22B3F), radius = w * 0.14f, center = Offset(w / 2f, h / 2f))
+                    }
+                    "CZ" -> {
+                        drawRect(Color(0xFFF4F4F4), size = Size(w, h / 2f))
+                        drawRect(Color(0xFFD22B3F), topLeft = Offset(0f, h / 2f), size = Size(w, h / 2f))
+                        val tri = Path().apply {
+                            moveTo(0f, 0f); lineTo(w * 0.50f, h / 2f); lineTo(0f, h); close()
+                        }
+                        drawPath(tri, Color(0xFF11457E))
+                    }
+                    "AT" -> {
+                        listOf(0xFFD22B3F, 0xFFF4F4F4, 0xFFD22B3F).forEachIndexed { i, c ->
+                            drawRect(Color(c), topLeft = Offset(0f, h / 3f * i), size = Size(w, h / 3f + 1f))
+                        }
+                    }
+                    "EE" -> {
+                        listOf(0xFF0072CE, 0xFF1A1A1A, 0xFFF4F4F4).forEachIndexed { i, c ->
+                            drawRect(Color(c), topLeft = Offset(0f, h / 3f * i), size = Size(w, h / 3f + 1f))
+                        }
+                    }
+                    "SE" -> {
+                        drawRect(Color(0xFF006AA7), size = Size(w, h))
+                        drawRect(Color(0xFFFECC02), topLeft = Offset(w * 0.30f, 0f), size = Size(w * 0.16f, h))
+                        drawRect(Color(0xFFFECC02), topLeft = Offset(0f, h * 0.42f), size = Size(w, h * 0.16f))
+                    }
+                    "FI" -> {
+                        drawRect(Color(0xFFF4F4F4), size = Size(w, h))
+                        drawRect(Color(0xFF1B3E9C), topLeft = Offset(w * 0.28f, 0f), size = Size(w * 0.18f, h))
+                        drawRect(Color(0xFF1B3E9C), topLeft = Offset(0f, h * 0.41f), size = Size(w, h * 0.18f))
                     }
                     "" -> {
                         drawRect(

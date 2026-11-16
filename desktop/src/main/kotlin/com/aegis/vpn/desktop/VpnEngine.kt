@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.desktop
+package com.aegis.vpn.desktop
 
 import com.aegis.vpn.config.ConfigParser
 import com.aegis.vpn.config.SingBoxConfig
@@ -33,6 +33,10 @@ class VpnEngine {
                 val exe = findSingBox() ?: error("sing-box.exe не найден. Поместите sing-box.exe рядом с приложением или в папку tools.")
 
                 fun logTail(n: Int = 8): String = runCatching { logFile.readLines().takeLast(n).joinToString(" | ") }.getOrDefault("")
+                // sing-box colours its log; strip ANSI escapes before showing it in the UI.
+                fun plain(text: String): String = text.replace(Regex("\\u001B\\[[0-9;]*m"), "")
+                    .replace(Regex("\\s{2,}"), " ")
+                    .trim()
                 fun isBindError(t: String) = t.contains("address already in use", true) || t.contains("bind:", true) || t.contains("Only one usage", true)
                 fun isTunFail(t: String) = t.contains("Access is denied", true) || t.contains("configure tun", true) || t.contains("wintun", true) || t.contains("operation not permitted", true)
 
@@ -105,7 +109,7 @@ class VpnEngine {
                     }
                     if (running == null) {
                         val tail2 = runCatching { logFile.readLines().takeLast(8).joinToString("\n") }.getOrDefault(tail)
-                        _state.value = VpnSnapshot(VpnStatus.ERROR, profile.name, "sing-box завершился. ${tail2.take(300)}")
+                        _state.value = VpnSnapshot(VpnStatus.ERROR, profile.name, "sing-box завершился: ${plain(tail2).take(220)}")
                         return@launch
                     }
                 }
@@ -126,7 +130,7 @@ class VpnEngine {
                         val current = _state.value
                         if (current.status == VpnStatus.CONNECTED || current.status == VpnStatus.CONNECTING) {
                             val tail = runCatching { logFile.readLines().takeLast(6).joinToString(" | ") }.getOrDefault("")
-                            _state.value = VpnSnapshot(VpnStatus.ERROR, profile.name, "Соединение завершено ($code). ${tail.take(250)}")
+                            _state.value = VpnSnapshot(VpnStatus.ERROR, profile.name, "Соединение завершено ($code): ${plain(tail).take(200)}")
                         }
                     }
                 }
