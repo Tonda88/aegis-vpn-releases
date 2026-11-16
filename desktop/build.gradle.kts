@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.aegis.vpn"
-version = "1.1.7"
+version = "1.1.8"
 
 kotlin {
     jvmToolchain(17)
@@ -25,7 +25,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)
             packageName = "AegisVPN"
-            packageVersion = "1.1.7"
+            packageVersion = "1.1.8"
             description = "Aegis VPN Desktop"
             vendor = "Aegis"
             windows {

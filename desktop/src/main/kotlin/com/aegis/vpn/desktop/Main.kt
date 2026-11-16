@@ -101,13 +101,23 @@ fun main() = application {
         }
     )
 
+    // Hoisted so the position/size survive a hide-to-tray round trip.
+    val windowState = rememberWindowState(size = DpSize(1100.dp, 760.dp))
     if (windowVisible) {
         Window(
-            onCloseRequest = { windowVisible = false }, // hide to tray
+            onCloseRequest = { windowVisible = false }, // close -> tray
             title = "Aegis VPN",
-            state = rememberWindowState(size = DpSize(1100.dp, 760.dp)),
+            state = windowState,
             icon = appIcon
         ) {
+            // Minimise -> hide to tray (no taskbar entry). Reset the flag first,
+            // otherwise the re-created window would open minimised again.
+            LaunchedEffect(windowState.isMinimized) {
+                if (windowState.isMinimized) {
+                    windowState.isMinimized = false
+                    windowVisible = false
+                }
+            }
             LaunchedEffect(Unit) {
                 runCatching { window.minimumSize = java.awt.Dimension(850, 600) }
                 polishNativeFrame(window)

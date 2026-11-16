@@ -1,7 +1,7 @@
 {
-    "version":  "1.1.7",
-    "versionCode":  9,
-    "notes":  "Desktop 1.1.7: флаги новых стран в списке серверов (Чехия, Австрия, Эстония, Швеция, Финляндия) и аккуратные подписи; авто-переподключение при смене сервера, исправленные названия и чистое окно без светлой рамки — всё в этой сборке.",
-    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.7/AegisVPN-Desktop-1.1.7-windows-x64.zip",
-    "sha256":  "729476680eea1b6407a82cbec40b4908acd8aaacb636617a5b46ad28d35e371c"
+    "version":  "1.1.8",
+    "versionCode":  10,
+    "notes":  "Desktop 1.1.8: свёрнутое окно уходит в трей и больше не висит в панели задач; клик по иконке в трее или «Открыть Aegis VPN» возвращает окно. Плюс всё из 1.1.7: флаги новых стран, встроенный помощник рамки окна, авто-переподключение при смене сервера, исправленные названия.\n\nВерсия: 1.1.8 (versionCode 10).",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.8/AegisVPN-Desktop-1.1.8-windows-x64.zip",
+    "sha256":  "3b4681a41d47eb89f9b78d38dbd071a17ec2897551b26d5525fed26a74e7b60c"
 }
