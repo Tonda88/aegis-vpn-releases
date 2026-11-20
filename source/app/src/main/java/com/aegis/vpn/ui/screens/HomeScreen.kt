@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.ui.screens
+package com.aegis.vpn.ui.screens
 
 import com.aegis.vpn.ui.theme.AppColors
 
@@ -277,6 +277,54 @@ fun HomeScreen(
         }
 
         item { Spacer(Modifier.height(14.dp)) }
+
+        // Auto-connect badge — shown when at least one app rule is configured.
+        if (settings.autoApps.isNotEmpty()) {
+            item {
+                val autoActive = status == VpnStatus.CONNECTED
+                val autoError = status == VpnStatus.ERROR
+                val badgeColor = when {
+                    autoError -> AppColors.danger
+                    autoActive -> AppColors.accent
+                    else -> AppColors.textSecondary
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(badgeColor.copy(alpha = 0.08f))
+                        .clickable(onClick = onOpenApps)
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(badgeColor)
+                    )
+                    Spacer(Modifier.width(9.dp))
+                    Text(
+                        text = when {
+                            autoError -> "Авто-режим: ошибка подключения"
+                            autoActive -> "Авто-режим активен · ${settings.autoApps.size} прил."
+                            else -> "Авто-режим ожидает · ${settings.autoApps.size} прил."
+                        },
+                        color = badgeColor,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chevron),
+                        contentDescription = null,
+                        tint = badgeColor.copy(alpha = 0.6f),
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+            item { Spacer(Modifier.height(8.dp)) }
+        }
 
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {

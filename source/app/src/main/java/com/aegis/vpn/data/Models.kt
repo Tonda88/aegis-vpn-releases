@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.data
+package com.aegis.vpn.data
 
 import java.util.UUID
 
@@ -35,7 +35,9 @@ data class AppSettings(
     val autoApps: Set<String> = emptySet(),
     /** Remembered mode of the Applications tab. */
     val appListMode: AppListMode = AppListMode.TUNNEL,
-    val accentTheme: AccentTheme = AccentTheme.MINT
+    val accentTheme: AccentTheme = AccentTheme.MINT,
+    /** Keep VPN alive when the screen turns off (auto-mode only). */
+    val keepVpnOnScreenOff: Boolean = true
 )
 
 enum class AppListMode {

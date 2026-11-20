@@ -33,12 +33,23 @@ class ForegroundAppTracker(context: Context) {
 
         val event = UsageEvents.Event()
         var previous = current
+        // Track the last RESUMED package in this batch separately so we don't
+        // incorrectly clear `current` when a PAUSED event arrives without a
+        // subsequent RESUMED in the same batch (e.g. during app-to-app switch).
+        var lastResumed: String? = null
         while (events.hasNextEvent()) {
             events.getNextEvent(event)
             when (event.eventType) {
-                UsageEvents.Event.ACTIVITY_RESUMED -> current = event.packageName
+                UsageEvents.Event.ACTIVITY_RESUMED -> {
+                    current = event.packageName
+                    lastResumed = event.packageName
+                }
                 UsageEvents.Event.ACTIVITY_PAUSED -> {
-                    if (current == event.packageName) current = null
+                    // Only clear if nothing new resumed in this batch yet —
+                    // avoids a transient null between PAUSED(A) and RESUMED(B).
+                    if (lastResumed == null && current == event.packageName) {
+                        current = null
+                    }
                 }
             }
             if (event.timeStamp > lastEventTime) lastEventTime = event.timeStamp

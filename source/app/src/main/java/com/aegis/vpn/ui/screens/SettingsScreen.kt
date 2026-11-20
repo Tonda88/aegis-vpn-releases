@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.ui.screens
+package com.aegis.vpn.ui.screens
 
 import android.content.Intent
 import android.provider.Settings
@@ -116,6 +116,14 @@ fun SettingsScreen(
                     checked = settings.autoReconnect,
                     onCheckedChange = { onSettingsChange(settings.copy(autoReconnect = it)) },
                     icon = R.drawable.ic_refresh
+                )
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 18.dp))
+                ToggleRow(
+                    title = "Не отключать при выключении экрана",
+                    subtitle = "Авто-режим: VPN остаётся активным, если экран погас",
+                    checked = settings.keepVpnOnScreenOff,
+                    onCheckedChange = { onSettingsChange(settings.copy(keepVpnOnScreenOff = it)) },
+                    icon = R.drawable.ic_lock
                 )
             }
         }

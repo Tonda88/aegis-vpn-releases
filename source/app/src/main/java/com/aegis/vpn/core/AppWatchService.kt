@@ -43,6 +43,7 @@ class AppWatchService : Service() {
     private lateinit var tracker: ForegroundAppTracker
     private var watchJob: Job? = null
     private var stateJob: Job? = null
+    private var disconnectJob: Job? = null
 
     /** The VPN was raised by a rule and may be lowered automatically. */
     private var autoConnected = false
@@ -107,11 +108,14 @@ class AppWatchService : Service() {
                                 autoConnected = false
                                 suppressed = true
                             }
+                            updateWatchNotification(error = false)
                         }
                         VpnStatus.ERROR -> {
                             autoConnected = false
                             if (active) retryAt = SystemClock.elapsedRealtime() + RETRY_DELAY_MS
+                            updateWatchNotification(error = true)
                         }
+                        VpnStatus.CONNECTED -> updateWatchNotification(error = false)
                         else -> Unit
                     }
                 }
@@ -125,6 +129,7 @@ class AppWatchService : Service() {
     override fun onDestroy() {
         watchJob?.cancel()
         stateJob?.cancel()
+        disconnectJob?.cancel()
         scope.cancel()
         super.onDestroy()
     }
@@ -149,16 +154,31 @@ class AppWatchService : Service() {
             if (nowAuto != active) {
                 active = nowAuto
                 if (nowAuto) {
+                    // Cancel any pending disconnect when the user returns.
+                    disconnectJob?.cancel()
+                    disconnectJob = null
                     if (!suppressed) requestConnect()
                 } else {
                     if (!isScreenOn()) {
-                        // The screen was turned off, the application is only
-                        // paused. Keep the tunnel alive.
-                        Log.d(TAG, "the screen is off, keeping the tunnel")
-                        return
+                        // The screen was turned off; respect the user setting.
+                        val keepOnScreenOff = runCatching {
+                            AppGraph.store.settings.value.keepVpnOnScreenOff
+                        }.getOrDefault(true)
+                        if (keepOnScreenOff) {
+                            Log.d(TAG, "the screen is off, keeping the tunnel (keepVpnOnScreenOff=true)")
+                            return
+                        }
                     }
-                    suppressed = false
-                    requestDisconnect()
+                    // Grace period: wait before disconnecting in case the user
+                    // switches back quickly (e.g. checks another app briefly).
+                    disconnectJob?.cancel()
+                    disconnectJob = scope.launch {
+                        delay(DISCONNECT_GRACE_MS)
+                        if (!active) {
+                            suppressed = false
+                            requestDisconnect()
+                        }
+                    }
                 }
             }
         }
@@ -225,16 +245,7 @@ class AppWatchService : Service() {
     }
 
     private fun showForegroundNotification() {
-        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_shield)
-            .setContentTitle(getString(R.string.channel_watch_name))
-            .setContentText(getString(R.string.channel_watch_text))
-            .setOngoing(true)
-            .setOnlyAlertOnce(true)
-            .setShowWhen(false)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
-            .build()
+        val notification: Notification = buildWatchNotification(error = false)
         if (Build.VERSION.SDK_INT >= 34) {
             startForeground(
                 NOTIFICATION_ID,
@@ -246,12 +257,37 @@ class AppWatchService : Service() {
         }
     }
 
+    private fun updateWatchNotification(error: Boolean) {
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.notify(NOTIFICATION_ID, buildWatchNotification(error))
+    }
+
+    private fun buildWatchNotification(error: Boolean): Notification {
+        val title = getString(R.string.channel_watch_name)
+        val text = if (error) {
+            "Ошибка подключения, повтор через ${RETRY_DELAY_MS / 1000} с"
+        } else {
+            getString(R.string.channel_watch_text)
+        }
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_shield)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setShowWhen(false)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .build()
+    }
+
     companion object {
         private const val TAG = "AppWatchService"
         private const val CHANNEL_ID = "vpn_auto_watch"
         private const val NOTIFICATION_ID = 102
-        private const val POLL_INTERVAL_MS = 1000L
-        private const val RETRY_DELAY_MS = 15_000L
+        private const val POLL_INTERVAL_MS = 300L       // было 1000L — быстрее замечаем смену приложения
+        private const val RETRY_DELAY_MS = 5_000L       // было 15_000L — быстрее повторяем при ошибке
+        private const val DISCONNECT_GRACE_MS = 1_500L  // новый — не отключаем сразу при быстром переключении
         const val ACTION_STOP = "com.aegis.vpn.action.STOP_WATCH"
     }
 }

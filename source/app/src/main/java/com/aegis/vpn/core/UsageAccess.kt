@@ -39,6 +39,7 @@ object UsageAccess {
      * They must never be treated as "the user left the application".
      */
     private val TRANSIENT_PACKAGES = setOf(
+        // AOSP / Google
         "com.android.systemui",
         "com.android.permissioncontroller",
         "com.google.android.permissioncontroller",
@@ -48,7 +49,22 @@ object UsageAccess {
         "com.android.sharingdialog",
         "com.android.intentresolver",
         "com.google.android.intentresolver",
+        // Samsung OneUI
         "com.android.samsung.systemui",
+        "com.samsung.android.permissioncontroller",
+        "com.samsung.android.incallui",
+        "com.samsung.android.app.sharelive",
+        "com.sec.android.app.popupuireceiver",
+        // MIUI / HyperOS
+        "com.miui.permcenter",
+        "com.miui.securitycenter",
+        "com.miui.systemAdSolution",
+        // ColorOS / OPPO / Realme
+        "com.coloros.permissionmanager",
+        "com.oppo.permissionmanager",
+        // Vivo / OriginOS
+        "com.vivo.permissionmanager",
+        // Google Play / Vending
         "com.android.vending"
     )
 
@@ -57,6 +73,14 @@ object UsageAccess {
         if (packageName in TRANSIENT_PACKAGES) return true
         if (packageName.contains(".inputmethod") || packageName.contains(".ime")) return true
         if (packageName.endsWith(".latin")) return true
+        // MIUI / Samsung / ColorOS extra systemui components
+        if (packageName.startsWith("com.miui.") &&
+            (packageName.contains("systemui") || packageName.contains("screen") || packageName.contains("dialog"))
+        ) return true
+        if (packageName.startsWith("com.samsung.android.") &&
+            (packageName.contains("systemui") || packageName.contains("dialog"))
+        ) return true
+        if (packageName.startsWith("com.coloros.") && packageName.contains("dialog")) return true
         return false
     }
 }
