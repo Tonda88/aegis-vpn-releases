@@ -1,9 +1,9 @@
 {
-  "versionCode": 10,
-  "versionName": "1.3.5",
-  "notes": "Исправление кодировки интерфейса: вкладка «Приложения» и остальные экраны (включая сборки arm64-v8a и armeabi-v7a).",
-  "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.5/AegisVPN-1.3.5-arm64-v8a.apk",
-  "arm64Sha256": "ed337bc74be536202c0477e76805d20955a676226deb859ccdeb4df761f5ddad",
-  "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.5/AegisVPN-1.3.5-armeabi-v7a.apk",
-  "armeabiV7aSha256": "4fb91747bd3d3f12e763c2a2694ddf76a3efaf35afeda239d41834c66faa8f2a"
+    "versionCode":  11,
+    "versionName":  "1.3.6",
+    "notes":  "Автоподключение по приложениям: скорость реакции 300 мс, grace-период 1.5 с, retry 5 с, исправлена гонка PAUSED/RESUMED, поддержка MIUI/OneUI/ColorOS, настройка keepVpnOnScreenOff, индикатор авто-режима на главном экране.",
+    "arm64Url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.6/AegisVPN-1.3.6-arm64-v8a.apk",
+    "arm64Sha256":  "5a4099b871d207a124d74118ffa53f4e6e1b705dd2f82d8930dd5e6048753dc2",
+    "armeabiV7aUrl":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.6/AegisVPN-1.3.6-armeabi-v7a.apk",
+    "armeabiV7aSha256":  "5c16db376d584594f1d37dd34702e670c745a4832c8fb476a9ac652e406cc6c4"
 }
