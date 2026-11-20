@@ -1,9 +1,9 @@
 {
-    "versionCode":  11,
-    "versionName":  "1.3.6",
-    "notes":  "Автоподключение по приложениям: скорость реакции 300 мс, grace-период 1.5 с, retry 5 с, исправлена гонка PAUSED/RESUMED, поддержка MIUI/OneUI/ColorOS, настройка keepVpnOnScreenOff, индикатор авто-режима на главном экране.",
-    "arm64Url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.6/AegisVPN-1.3.6-arm64-v8a.apk",
-    "arm64Sha256":  "5a4099b871d207a124d74118ffa53f4e6e1b705dd2f82d8930dd5e6048753dc2",
-    "armeabiV7aUrl":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.6/AegisVPN-1.3.6-armeabi-v7a.apk",
-    "armeabiV7aSha256":  "5c16db376d584594f1d37dd34702e670c745a4832c8fb476a9ac652e406cc6c4"
+    "versionCode":  12,
+    "versionName":  "1.3.7",
+    "notes":  "AegisVPN Android 1.3.7\n\n- Сортировка серверов по пингу: кнопка ⚡ в заголовке списка серверов\n- Пинг каждого сервера показывается прямо на карточке (цвет: зелёный \u003c 150мс, синий \u003c 400мс, красный / «—» при недоступности)\n- Измерение идёт параллельно для всех серверов",
+    "arm64Url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.7/AegisVPN-1.3.7-arm64-v8a.apk",
+    "arm64Sha256":  "942764aa643e925ca518847764aca1e65bf2da3caf91f6442a963c134a601138",
+    "armeabiV7aUrl":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.7/AegisVPN-1.3.7-armeabi-v7a.apk",
+    "armeabiV7aSha256":  "81c91c61c73c27df29fd90e27f80806d262ade019c3b0bb1af8ed0feccb7d62b"
 }

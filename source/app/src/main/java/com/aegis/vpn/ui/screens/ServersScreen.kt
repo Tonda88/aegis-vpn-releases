@@ -1,4 +1,4 @@
-﻿package com.aegis.vpn.ui.screens
+package com.aegis.vpn.ui.screens
 
 import com.aegis.vpn.ui.theme.AppColors
 
@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,8 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +57,13 @@ import com.aegis.vpn.ui.components.IconCircleButton
 import com.aegis.vpn.ui.components.Pill
 import com.aegis.vpn.ui.components.ScreenTitle
 import com.aegis.vpn.ui.components.SectionLabel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.InetSocketAddress
+import java.net.Socket
 
 @Composable
 fun ServersScreen(
@@ -69,14 +79,51 @@ fun ServersScreen(
     var pendingDelete by remember { mutableStateOf<ServerProfile?>(null) }
     var pendingRename by remember { mutableStateOf<ServerProfile?>(null) }
     var pendingDeleteAll by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
-    val groups = remember(servers) {
-        val map = linkedMapOf<String, MutableList<ServerProfile>>()
-        servers.forEach { server ->
-            val key = serverGroupName(server)
-            map.getOrPut(key) { mutableListOf() }.add(server)
+    // Ping state: null = not measured, -1 = timeout, >= 0 = ms
+    val pings = remember { mutableStateMapOf<String, Long>() }
+    var pinging by remember { mutableStateOf(false) }
+    var sortByPing by remember { mutableStateOf(false) }
+
+    fun startPing() {
+        if (pinging) return
+        pinging = true
+        sortByPing = false
+        pings.clear()
+        scope.launch {
+            servers.map { server ->
+                async(Dispatchers.IO) {
+                    val t = measureTcpPingMs(server.host, server.port)
+                    pings[server.id] = t
+                }
+            }.awaitAll()
+            pinging = false
+            sortByPing = true
         }
-        map.entries.map { it.key to it.value.toList() }
+    }
+
+    val displayedServers = remember(servers, sortByPing, pings.size) {
+        if (sortByPing && pings.isNotEmpty()) {
+            servers.sortedWith(compareBy {
+                val p = pings[it.id] ?: Long.MAX_VALUE
+                if (p < 0) Long.MAX_VALUE else p
+            })
+        } else servers
+    }
+
+    val groups = remember(displayedServers, sortByPing, pings.size) {
+        if (sortByPing && pings.isNotEmpty()) {
+            // Single flat group when sorted by ping
+            listOf("По пингу" to displayedServers)
+        } else {
+            val map = linkedMapOf<String, MutableList<ServerProfile>>()
+            displayedServers.forEach { server ->
+                val key = serverGroupName(server)
+                map.getOrPut(key) { mutableListOf() }.add(server)
+            }
+            map.entries.map { it.key to it.value.toList() }
+        }
     }
 
     LazyColumn(
@@ -92,6 +139,13 @@ fun ServersScreen(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (servers.isNotEmpty()) {
+                        // Ping sort button
+                        IconCircleButton(
+                            icon = R.drawable.ic_bolt,
+                            contentDescription = "Сортировать по пингу",
+                            onClick = { startPing() },
+                            tint = if (sortByPing) AppColors.accent else AppColors.textSecondary
+                        )
                         IconCircleButton(
                             icon = R.drawable.ic_delete,
                             contentDescription = "Удалить все серверы",
@@ -197,13 +251,33 @@ fun ServersScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                SectionLabel("Мои серверы")
+                SectionLabel(if (sortByPing) "По пингу" else "Мои серверы")
                 Spacer(Modifier.weight(1f))
-                Text(
-                    text = "${servers.size}",
-                    color = AppColors.textSecondary,
-                    fontSize = 12.sp
-                )
+                if (pinging) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(14.dp),
+                        strokeWidth = 1.5.dp,
+                        color = AppColors.accent
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        text = "Измеряю…",
+                        color = AppColors.textSecondary,
+                        fontSize = 11.sp
+                    )
+                } else if (sortByPing) {
+                    Text(
+                        text = "отсортировано · ${servers.size}",
+                        color = AppColors.accent,
+                        fontSize = 11.sp
+                    )
+                } else {
+                    Text(
+                        text = "${servers.size}",
+                        color = AppColors.textSecondary,
+                        fontSize = 12.sp
+                    )
+                }
             }
         }
 
@@ -253,6 +327,8 @@ fun ServersScreen(
                     ServerCard(
                         server = server,
                         selected = server.id == selectedId,
+                        ping = pings[server.id],
+                        pinging = pinging && pings[server.id] == null,
                         onClick = { onSelect(server) },
                         onLongClick = { pendingRename = server },
                         onDelete = { pendingDelete = server }
@@ -387,6 +463,8 @@ fun ServersScreen(
 private fun ServerCard(
     server: ServerProfile,
     selected: Boolean,
+    ping: Long?,
+    pinging: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
     onDelete: () -> Unit
@@ -446,13 +524,42 @@ private fun ServerCard(
                 }
             }
             Spacer(Modifier.height(4.dp))
-            Text(
-                text = "${server.protocol.label} • ${server.endpointLabel}",
-                color = AppColors.textSecondary,
-                fontSize = 11.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "${server.protocol.label} • ${server.endpointLabel}",
+                    color = AppColors.textSecondary,
+                    fontSize = 11.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
+                // Ping badge
+                when {
+                    pinging -> {
+                        Spacer(Modifier.width(6.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(10.dp),
+                            strokeWidth = 1.2.dp,
+                            color = AppColors.textSecondary
+                        )
+                    }
+                    ping != null -> {
+                        Spacer(Modifier.width(6.dp))
+                        val (pingText, pingColor) = when {
+                            ping < 0 -> "—" to AppColors.danger
+                            ping < 150 -> "${ping}мс" to AppColors.accent
+                            ping < 400 -> "${ping}мс" to AppColors.blue
+                            else -> "${ping}мс" to AppColors.danger
+                        }
+                        Text(
+                            text = pingText,
+                            color = pingColor,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
         }
         Spacer(Modifier.width(4.dp))
         Box(
@@ -536,4 +643,15 @@ fun protocolColor(protocol: VpnProtocol): Color = when (protocol) {
     VpnProtocol.VLESS -> AppColors.accent
     VpnProtocol.SHADOWSOCKS -> AppColors.blue
     VpnProtocol.WIREGUARD -> AppColors.violet
+}
+
+/** TCP connect ping in ms, or -1 on timeout/error. */
+private fun measureTcpPingMs(host: String, port: Int, timeoutMs: Int = 3000): Long {
+    return runCatching {
+        val start = System.currentTimeMillis()
+        Socket().use { socket ->
+            socket.connect(InetSocketAddress(host, port), timeoutMs)
+        }
+        System.currentTimeMillis() - start
+    }.getOrDefault(-1L)
 }
