@@ -1,9 +1,9 @@
 {
-    "versionCode": 14,
-    "versionName": "1.3.9",
-    "notes": "AegisVPN Android 1.3.9\n\n- Автовыбор лучшего сервера: при подключении задержка всех серверов измеряется параллельно, подключается самый быстрый\n- Работает для кнопки подключения, авто-режима по приложениям, плитки быстрых настроек и автозапуска\n- Ручной выбор сервера в списке по-прежнему имеет приоритет\n- Новая настройка «Лучший сервер по пингу» в разделе «Поведение» (включена по умолчанию)\n- Если ни один сервер не отвечает, используется выбранный ранее",
-    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.9/AegisVPN-1.3.9-arm64-v8a.apk",
-    "arm64Sha256": "4ee6b38e0a2f8fda9a5b45ed1041f978525b21256eefa73865ea9fc5be46d3bb",
-    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.9/AegisVPN-1.3.9-armeabi-v7a.apk",
-    "armeabiV7aSha256": "a43633393cc298dca124a01a66c69e484ef658407a9ff708f2b37b903dd3051c"
+    "versionCode": 15,
+    "versionName": "1.3.10",
+    "notes": "AegisVPN Android 1.3.10\n\n- Исправлена установка обновления: после 100% загрузки установщик открывается автоматически\n- Если нужно разрешение «Установка неизвестных приложений», приложение возвращается к установке само после возврата из настроек Android\n- Скачанный APK запоминается и установка повторяется при возврате в приложение, даже если процесс был перезапущен\n- Явные сообщения об ошибке установки и повреждённом APK вместо тихого отказа\n- Разрешение на чтение APK выдаётся всем установщикам системы (совместимость с оболочками)",
+    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.10/AegisVPN-1.3.10-arm64-v8a.apk",
+    "arm64Sha256": "8799558e436619b26138d67a25c37307bae2f1be747124a97c5c4383b2009e93",
+    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.10/AegisVPN-1.3.10-armeabi-v7a.apk",
+    "armeabiV7aSha256": "0866b0c5d77f11368a7953d11507de1f458088bce46965734423012ecdb5b7db"
 }
