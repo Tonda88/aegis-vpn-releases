@@ -48,6 +48,7 @@ import com.aegis.vpn.R
 enum class AppTab(val label: String, @DrawableRes val icon: Int) {
     HOME("Главная", R.drawable.ic_shield),
     SERVERS("Серверы", R.drawable.ic_server),
+    STATS("Статистика", R.drawable.ic_stats),
     APPS("Приложения", R.drawable.ic_apps),
     SETTINGS("Настройки", R.drawable.ic_settings)
 }

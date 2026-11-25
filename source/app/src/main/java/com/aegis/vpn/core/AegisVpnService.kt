@@ -191,13 +191,25 @@ class AegisVpnService :
     private fun startTrafficTicker(server: ServerProfile) {
         val startRx = TrafficCounter.totalRx()
         val startTx = TrafficCounter.totalTx()
+        // Last values already accumulated into the persistent store, so the
+        // delta between ticks is added exactly once.
+        var accumulatedRx = startRx
+        var accumulatedTx = startTx
         trafficJob = serviceScope.launch {
             while (isActive && VpnStateHolder.state.value.status == VpnStatus.CONNECTED) {
                 delay(1000)
-                VpnStateHolder.traffic(
-                    TrafficCounter.totalRx() - startRx,
-                    TrafficCounter.totalTx() - startTx
-                )
+                val nowRx = TrafficCounter.totalRx()
+                val nowTx = TrafficCounter.totalTx()
+                VpnStateHolder.traffic(nowRx - startRx, nowTx - startTx)
+
+                // Push the increment into the persistent day/week/month store.
+                val deltaRx = nowRx - accumulatedRx
+                val deltaTx = nowTx - accumulatedTx
+                if (deltaRx > 0 || deltaTx > 0) {
+                    runCatching { AppGraph.traffic.add(deltaRx, deltaTx) }
+                    accumulatedRx = nowRx
+                    accumulatedTx = nowTx
+                }
             }
         }
     }

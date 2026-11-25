@@ -85,6 +85,7 @@ import com.aegis.vpn.ui.screens.AppsScreen
 import com.aegis.vpn.ui.screens.HomeScreen
 import com.aegis.vpn.ui.screens.ServersScreen
 import com.aegis.vpn.ui.screens.SettingsScreen
+import com.aegis.vpn.ui.screens.StatsScreen
 import com.aegis.vpn.ui.theme.AegisTheme
 import com.aegis.vpn.ui.theme.AppColors
 import com.aegis.vpn.update.AppUpdater
@@ -468,6 +469,8 @@ private fun AegisApp(
                     onAdd = { showAddSheet = true },
                     onScan = launchScan
                 )
+
+                AppTab.STATS -> StatsScreen()
 
                 AppTab.APPS -> AppsScreen(
                     settings = settings,
