@@ -1,9 +1,9 @@
 {
-    "versionCode":  12,
-    "versionName":  "1.3.7",
-    "notes":  "AegisVPN Android 1.3.7\n\n- Сортировка серверов по пингу: кнопка ⚡ в заголовке списка серверов\n- Пинг каждого сервера показывается прямо на карточке (цвет: зелёный \u003c 150мс, синий \u003c 400мс, красный / «—» при недоступности)\n- Измерение идёт параллельно для всех серверов",
-    "arm64Url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.7/AegisVPN-1.3.7-arm64-v8a.apk",
-    "arm64Sha256":  "942764aa643e925ca518847764aca1e65bf2da3caf91f6442a963c134a601138",
-    "armeabiV7aUrl":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.7/AegisVPN-1.3.7-armeabi-v7a.apk",
-    "armeabiV7aSha256":  "81c91c61c73c27df29fd90e27f80806d262ade019c3b0bb1af8ed0feccb7d62b"
+    "versionCode": 13,
+    "versionName": "1.3.8",
+    "notes": "AegisVPN Android 1.3.8\n\n- Новый экран «Статистика»: сегодня, неделя, месяц и всё время\n- График трафика за последние 7 дней\n- Принятый и отданный трафик учитываются раздельно\n- История хранится на устройстве и не теряется после перезапуска\n- Сброс статистики одной кнопкой",
+    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.8/AegisVPN-1.3.8-arm64-v8a.apk",
+    "arm64Sha256": "6ca222324c3e2d5fdc994e60fa73f6d1ff5160cf5150ebcee4cadaa9ee968965",
+    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.8/AegisVPN-1.3.8-armeabi-v7a.apk",
+    "armeabiV7aSha256": "11890df16158036b037d0c38f7494f8392c0df7274ca1d3a669fc28d984c92a6"
 }
