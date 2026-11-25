@@ -2,6 +2,8 @@ package com.aegis.vpn.ui.screens
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -73,14 +75,37 @@ fun SettingsScreen(
     var foundUpdate by remember { mutableStateOf<AppUpdater.UpdateAvailable?>(null) }
     var showUpToDate by remember { mutableStateOf(false) }
 
-    fun startInstall(update: AppUpdater.UpdateAvailable, file: java.io.File) {
-        if (!AppUpdater.canRequestPackageInstalls(context)) {
-            statusText = "Разрешите установку из этого приложения, затем повторите"
-            runCatching { context.startActivity(AppUpdater.unknownAppSourcesIntent(context)) }
-            return
+    val installPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        when (val result = AppUpdater.tryInstall(context)) {
+            AppUpdater.InstallResult.Started -> {
+                AppUpdater.clearPending(context)
+                statusText = "Открываем установку…"
+            }
+            AppUpdater.InstallResult.NeedPermission -> Unit
+            is AppUpdater.InstallResult.Failed -> statusText = "Не удалось открыть установщик: ${result.message}"
+            AppUpdater.InstallResult.NoFile -> Unit
         }
-        runCatching { context.startActivity(AppUpdater.installIntent(context, file)) }
-            .onFailure { statusText = "Не удалось открыть установщик: ${it.message}" }
+    }
+
+    fun startInstall(update: AppUpdater.UpdateAvailable, file: java.io.File) {
+        AppUpdater.rememberPending(context, file, update.info.versionName)
+        when (val result = AppUpdater.tryInstall(context)) {
+            AppUpdater.InstallResult.Started -> {
+                AppUpdater.clearPending(context)
+                statusText = "Открываем установку…"
+            }
+            AppUpdater.InstallResult.NeedPermission -> {
+                statusText = "Разрешите установку из этого приложения, затем вернитесь"
+                runCatching { installPermissionLauncher.launch(AppUpdater.unknownAppSourcesIntent(context)) }
+                    .onFailure { statusText = "Не удалось открыть настройки установки: ${it.message}" }
+            }
+            is AppUpdater.InstallResult.Failed -> {
+                statusText = "Не удалось открыть установщик: ${result.message}"
+            }
+            AppUpdater.InstallResult.NoFile -> Unit
+        }
     }
 
     LazyColumn(

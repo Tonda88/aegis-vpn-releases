@@ -38,6 +38,9 @@ object AppUpdater {
 
     private val gson = Gson()
 
+    private const val KEY_PENDING_FILE = "pending_update_file"
+    private const val KEY_PENDING_VERSION = "pending_update_version"
+
     suspend fun checkForUpdate(): Result<UpdateAvailable?> = withContext(Dispatchers.IO) {
         runCatching {
             val connection = (URL(LATEST_JSON_URL).openConnection() as HttpURLConnection).apply {
@@ -138,12 +141,76 @@ object AppUpdater {
 
     fun installIntent(context: Context, apkFile: File): Intent {
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)
-        return Intent(Intent.ACTION_VIEW).apply {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/vnd.android.package-archive")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
+        // Некоторые оболочки (MIUI, OneUI) не наследуют разрешение на URI от
+        // флага. Выдаём его явно каждому установщику, который может открыть APK.
+        runCatching {
+            context.packageManager.queryIntentActivities(intent, 0).forEach { info ->
+                info.activityInfo.packageName?.let { pkg ->
+                    context.grantUriPermission(pkg, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            }
+        }
+        return intent
     }
+
+    sealed interface InstallResult {
+        object Started : InstallResult
+        object NeedPermission : InstallResult
+        object NoFile : InstallResult
+        data class Failed(val message: String) : InstallResult
+    }
+
+    /**
+     * Запоминаем скачанный APK, чтобы можно было повторить установку после
+     * возврата из системных настроек «Установка неизвестных приложений».
+     */
+    fun rememberPending(context: Context, file: File, versionName: String) {
+        updatePrefs(context).edit()
+            .putString(KEY_PENDING_FILE, file.absolutePath)
+            .putString(KEY_PENDING_VERSION, versionName)
+            .apply()
+    }
+
+    fun clearPending(context: Context) {
+        updatePrefs(context).edit()
+            .remove(KEY_PENDING_FILE)
+            .remove(KEY_PENDING_VERSION)
+            .apply()
+    }
+
+    /** Пытается открыть установщик. Возвращает причину, если не получилось. */
+    fun tryInstall(context: Context): InstallResult {
+        val prefs = updatePrefs(context)
+        val path = prefs.getString(KEY_PENDING_FILE, null) ?: return InstallResult.NoFile
+        // Уже установлены — старый файл больше не нужен.
+        if (prefs.getString(KEY_PENDING_VERSION, null) == BuildConfig.VERSION_NAME) {
+            clearPending(context)
+            return InstallResult.NoFile
+        }
+        val file = File(path)
+        if (!file.isFile || file.length() <= 0L) {
+            clearPending(context)
+            return InstallResult.NoFile
+        }
+        // Битый файл не открыть через установщик — сообщим об этом явно.
+        if (runCatching { context.packageManager.getPackageArchiveInfo(file.absolutePath, 0) }.getOrNull() == null) {
+            clearPending(context)
+            return InstallResult.Failed("APK повреждён или несовместим с устройством")
+        }
+        if (!canRequestPackageInstalls(context)) return InstallResult.NeedPermission
+        return runCatching {
+            context.startActivity(installIntent(context, file))
+            InstallResult.Started
+        }.getOrElse { InstallResult.Failed(it.message ?: "неизвестная ошибка") }
+    }
+
+    private fun updatePrefs(context: Context) =
+        context.getSharedPreferences("aegis_update", Context.MODE_PRIVATE)
 
     private fun preferredAbi(): String {
         val abis = Build.SUPPORTED_ABIS

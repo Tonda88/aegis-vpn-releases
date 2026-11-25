@@ -50,6 +50,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -67,6 +68,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.aegis.vpn.AppGraph
 import com.aegis.vpn.R
@@ -332,6 +336,52 @@ private fun AegisApp(
         ActivityResultContracts.RequestPermission()
     ) { }
 
+    // После возврата из системных настроек «неизвестные источники» установщик
+    // должен открыться сам — пользователю не надо нажимать кнопку повторно.
+    val installPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        when (val result = AppUpdater.tryInstall(context)) {
+            AppUpdater.InstallResult.Started -> {
+                AppUpdater.clearPending(context)
+                autoUpdate = null
+            }
+            AppUpdater.InstallResult.NeedPermission -> Unit
+            is AppUpdater.InstallResult.Failed -> notify("Не удалось открыть установщик: ${result.message}")
+            AppUpdater.InstallResult.NoFile -> Unit
+        }
+    }
+
+    fun handleInstallResult(result: AppUpdater.InstallResult) {
+        when (result) {
+            AppUpdater.InstallResult.Started -> {
+                AppUpdater.clearPending(context)
+                autoUpdate = null
+                notify("Открываем установку обновления")
+            }
+            AppUpdater.InstallResult.NeedPermission -> {
+                notify("Разрешите установку из этого приложения")
+                runCatching { installPermissionLauncher.launch(AppUpdater.unknownAppSourcesIntent(context)) }
+                    .onFailure { notify("Не удалось открыть настройки установки: ${it.message ?: "ошибка"}") }
+            }
+            is AppUpdater.InstallResult.Failed -> {
+                notify("Не удалось открыть установщик: ${result.message}")
+            }
+            AppUpdater.InstallResult.NoFile -> Unit
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                handleInstallResult(AppUpdater.tryInstall(context))
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
     LaunchedEffect(connectRequested) {
         if (connectRequested) {
             onConnectRequestConsumed()
@@ -523,14 +573,8 @@ private fun AegisApp(
                             }
                             autoDownloading = false
                             res.onSuccess { file ->
-                                autoUpdate = null
-                                if (!AppUpdater.canRequestPackageInstalls(context)) {
-                                    notify("Разрешите установку из этого приложения")
-                                    runCatching { context.startActivity(AppUpdater.unknownAppSourcesIntent(context)) }
-                                } else {
-                                    runCatching { context.startActivity(AppUpdater.installIntent(context, file)) }
-                                        .onFailure { notify("Не удалось открыть установщик: ${it.message}") }
-                                }
+                                AppUpdater.rememberPending(context, file, updateDialog.info.versionName)
+                                handleInstallResult(AppUpdater.tryInstall(context))
                             }.onFailure { e ->
                                 notify("Ошибка загрузки: ${e.message ?: "ошибка"}")
                             }
