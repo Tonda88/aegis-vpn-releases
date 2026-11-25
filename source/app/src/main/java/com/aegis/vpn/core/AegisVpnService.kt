@@ -99,7 +99,8 @@ class AegisVpnService :
         showForegroundNotification("Подключение", "Устанавливаем защищённое соединение…")
 
         val requestedId = intent?.getStringExtra(VpnController.EXTRA_SERVER_ID)
-        val server = requestedId?.let { id -> AppGraph.store.servers.value.firstOrNull { it.id == id } }
+        val servers = AppGraph.store.servers.value
+        val server = requestedId?.let { id -> servers.firstOrNull { it.id == id } }
             ?: AppGraph.store.selectedServer()
 
         if (server == null) {
@@ -114,7 +115,16 @@ class AegisVpnService :
         connectJob?.cancel()
         connectJob = serviceScope.launch {
             connectMutex.withLock {
-                connectInternal(server)
+                val chosen = chooseServer(requestedId, server, servers)
+                if (stopping.get()) return@withLock
+                if (chosen.id != server.id) {
+                    // Показать в интерфейсе тот сервер, к которому реально подключаемся.
+                    if (chosen.id != AppGraph.store.selectedId.value) {
+                        AppGraph.store.selectServer(chosen.id)
+                    }
+                    VpnStateHolder.connecting(chosen)
+                }
+                connectInternal(chosen)
             }
         }
         return START_STICKY
@@ -139,6 +149,26 @@ class AegisVpnService :
         }
         serviceScope.cancel()
         super.onDestroy()
+    }
+
+    /**
+     * При настройке «Лучший сервер по пингу» проверяем все серверы параллельно
+     * и подключаемся к самому быстрому. Явно выбранный сервер (тап в списке)
+     * имеет приоритет и не переопределяется.
+     */
+    private suspend fun chooseServer(
+        requestedId: String?,
+        fallback: ServerProfile,
+        servers: List<ServerProfile>
+    ): ServerProfile {
+        if (requestedId != null) return fallback
+        val autoBest = runCatching {
+            AppGraph.store.settings.value.autoBestServer
+        }.getOrDefault(true)
+        if (!autoBest || servers.size < 2) return fallback
+
+        updateForegroundNotification("Выбор сервера", "Ищем самый быстрый сервер…")
+        return ServerSelector.pickBest(servers) ?: fallback
     }
 
     private suspend fun connectInternal(server: ServerProfile) {

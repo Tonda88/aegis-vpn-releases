@@ -21,8 +21,8 @@ android {
         applicationId = "com.aegis.vpn"
         minSdk = 24
         targetSdk = 34
-        versionCode = 13
-        versionName = "1.3.8"
+        versionCode = 14
+        versionName = "1.3.9"
 
         vectorDrawables.useSupportLibrary = true
     }

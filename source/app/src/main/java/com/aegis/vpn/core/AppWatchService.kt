@@ -210,7 +210,7 @@ class AppWatchService : Service() {
         autoConnected = true
         suppressed = false
         retryAt = 0L
-        VpnController.connect(this, server.id)
+        VpnController.connect(this)
     }
 
     private fun requestDisconnect() {

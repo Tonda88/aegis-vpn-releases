@@ -68,7 +68,7 @@ class VpnTileService : TileService() {
                     }
                     startActivityAndCollapse(intentPending(intent))
                 } else {
-                    VpnController.connect(this, server.id)
+                    VpnController.connect(this)
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.aegis.vpn.data
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -45,14 +46,24 @@ class SettingsStore(context: Context) {
         _selectedId.value = storedSelection?.takeIf { id -> loadedServers.any { it.id == id } }
             ?: loadedServers.firstOrNull()?.id
 
+        val settingsRaw = prefs.getString(KEY_SETTINGS, null)
         val loadedSettings = runCatching {
-            prefs.getString(KEY_SETTINGS, null)?.let { json ->
+            settingsRaw?.let { json ->
                 gson.fromJson(json, AppSettings::class.java)
             }
         }.getOrNull()
         if (loadedSettings != null) {
+            // Gson создаёт объект в обход конструктора, поэтому отсутствующее
+            // в JSON поле остаётся false. Для старых установок включаем
+            // автовыбор лучшего сервера по пингу.
+            val hasAutoBest = runCatching {
+                JsonParser.parseString(settingsRaw.orEmpty())
+                    .asJsonObject
+                    .has("autoBestServer")
+            }.getOrDefault(false)
             _settings.value = loadedSettings.copy(
-                selectedPackages = loadedSettings.selectedPackages.toSet()
+                selectedPackages = loadedSettings.selectedPackages.toSet(),
+                autoBestServer = if (hasAutoBest) loadedSettings.autoBestServer else true
             )
         }
     }

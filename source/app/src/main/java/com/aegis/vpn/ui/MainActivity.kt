@@ -301,7 +301,7 @@ private fun AegisApp(
         if (pendingConnect) {
             pendingConnect = false
             if (result.resultCode == Activity.RESULT_OK) {
-                VpnController.connect(context, selectedServer?.id)
+                VpnController.connect(context)
             } else {
                 notify("Без разрешения VPN подключение невозможно")
             }
@@ -323,7 +323,7 @@ private fun AegisApp(
                         notify("Не удалось открыть системный запрос VPN")
                     }
             } else {
-                VpnController.connect(context, server.id)
+                VpnController.connect(context)
             }
         }
     }

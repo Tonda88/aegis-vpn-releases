@@ -23,7 +23,7 @@ class BootReceiver : BroadcastReceiver() {
             val server = AppGraph.store.selectedServer()
 
             if (settings.autoStart && server != null && VpnService.prepare(context) == null) {
-                VpnController.connect(context, server.id)
+                VpnController.connect(context)
             } else if (server == null) {
                 Log.i("BootReceiver", "no server selected, skip autostart")
             } else {

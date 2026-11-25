@@ -37,7 +37,9 @@ data class AppSettings(
     val appListMode: AppListMode = AppListMode.TUNNEL,
     val accentTheme: AccentTheme = AccentTheme.MINT,
     /** Keep VPN alive when the screen turns off (auto-mode only). */
-    val keepVpnOnScreenOff: Boolean = true
+    val keepVpnOnScreenOff: Boolean = true,
+    /** On connect, probe every server and use the one with the lowest ping. */
+    val autoBestServer: Boolean = true
 )
 
 enum class AppListMode {

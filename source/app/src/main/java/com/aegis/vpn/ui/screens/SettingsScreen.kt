@@ -119,6 +119,14 @@ fun SettingsScreen(
                 )
                 HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 18.dp))
                 ToggleRow(
+                    title = "Лучший сервер по пингу",
+                    subtitle = "При подключении измерять задержку всех серверов и выбирать самый быстрый",
+                    checked = settings.autoBestServer,
+                    onCheckedChange = { onSettingsChange(settings.copy(autoBestServer = it)) },
+                    icon = R.drawable.ic_bolt
+                )
+                HorizontalDivider(color = Color.White.copy(alpha = 0.05f), modifier = Modifier.padding(horizontal = 18.dp))
+                ToggleRow(
                     title = "Не отключать при выключении экрана",
                     subtitle = "Авто-режим: VPN остаётся активным, если экран погас",
                     checked = settings.keepVpnOnScreenOff,
