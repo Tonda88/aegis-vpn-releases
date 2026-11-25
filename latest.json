@@ -1,9 +1,9 @@
 {
-    "versionCode": 13,
-    "versionName": "1.3.8",
-    "notes": "AegisVPN Android 1.3.8\n\n- Новый экран «Статистика»: сегодня, неделя, месяц и всё время\n- График трафика за последние 7 дней\n- Принятый и отданный трафик учитываются раздельно\n- История хранится на устройстве и не теряется после перезапуска\n- Сброс статистики одной кнопкой",
-    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.8/AegisVPN-1.3.8-arm64-v8a.apk",
-    "arm64Sha256": "6ca222324c3e2d5fdc994e60fa73f6d1ff5160cf5150ebcee4cadaa9ee968965",
-    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.8/AegisVPN-1.3.8-armeabi-v7a.apk",
-    "armeabiV7aSha256": "11890df16158036b037d0c38f7494f8392c0df7274ca1d3a669fc28d984c92a6"
+    "versionCode": 14,
+    "versionName": "1.3.9",
+    "notes": "AegisVPN Android 1.3.9\n\n- Автовыбор лучшего сервера: при подключении задержка всех серверов измеряется параллельно, подключается самый быстрый\n- Работает для кнопки подключения, авто-режима по приложениям, плитки быстрых настроек и автозапуска\n- Ручной выбор сервера в списке по-прежнему имеет приоритет\n- Новая настройка «Лучший сервер по пингу» в разделе «Поведение» (включена по умолчанию)\n- Если ни один сервер не отвечает, используется выбранный ранее",
+    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.9/AegisVPN-1.3.9-arm64-v8a.apk",
+    "arm64Sha256": "4ee6b38e0a2f8fda9a5b45ed1041f978525b21256eefa73865ea9fc5be46d3bb",
+    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.9/AegisVPN-1.3.9-armeabi-v7a.apk",
+    "armeabiV7aSha256": "a43633393cc298dca124a01a66c69e484ef658407a9ff708f2b37b903dd3051c"
 }
