@@ -1,9 +1,9 @@
 {
-    "versionCode": 16,
-    "versionName": "1.3.11",
-    "notes": "AegisVPN Android 1.3.11\n\n- Долгое нажатие на плитку Aegis VPN в быстрых настройках открывает приложение\n- Короткое нажатие по-прежнему включает и отключает VPN",
-    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.11/AegisVPN-1.3.11-arm64-v8a.apk",
-    "arm64Sha256": "75cb31ea3a9d065d36edbb4d51b51d32a69a106a98285b81ca1f49741b5f0709",
-    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.11/AegisVPN-1.3.11-armeabi-v7a.apk",
-    "armeabiV7aSha256": "9b28b491cecab51da2399a3d4709ed0468def649fcf367dd37427d0680170be8"
+    "versionCode": 17,
+    "versionName": "1.3.12",
+    "notes": "AegisVPN Android 1.3.12\n\n- Новый шрифт Manrope (кириллица, 5 начертаний) встроен в приложение\n- Табличные цифры: скорость, трафик, пинг и таймер больше не «прыгают»\n- Живой aurora-фон на главном экране, цвет зависит от состояния VPN\n- Кнопка питания: дуга прогресса при подключении, дыхание при защите, отдача при ошибке\n- Тактильный отклик и пружинная анимация нажатия",
+    "arm64Url": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.12/AegisVPN-1.3.12-arm64-v8a.apk",
+    "arm64Sha256": "1583ec26301695358122b1c73332003a407db34547f8e26a4cb3cff9e3a72d78",
+    "armeabiV7aUrl": "https://github.com/Tonda88/aegis-vpn-releases/releases/download/v1.3.12/AegisVPN-1.3.12-armeabi-v7a.apk",
+    "armeabiV7aSha256": "d103ffaf0287c08d6eb6057a40796737d60abc190e7075ea43eb00460aba5552"
 }
