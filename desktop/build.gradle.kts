@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.aegis.vpn"
-version = "1.1.8"
+version = "1.1.9"
 
 kotlin {
     jvmToolchain(17)
@@ -25,12 +25,13 @@ compose.desktop {
         nativeDistributions {
             targetFormats(org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi, org.jetbrains.compose.desktop.application.dsl.TargetFormat.Exe)
             packageName = "AegisVPN"
-            packageVersion = "1.1.8"
+            packageVersion = "1.1.9"
             description = "Aegis VPN Desktop"
             vendor = "Aegis"
             windows {
                 menuGroup = "Aegis VPN"
                 shortcut = true
+                iconFile.set(file("src/main/resources/AegisVPN.ico"))
             }
         }
     }

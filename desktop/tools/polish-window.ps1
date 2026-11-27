@@ -8,6 +8,7 @@
 #   * DWMWA_BORDER_COLOR   -> removes the light 1px window border (Win11 22000+)
 #   * DWMWA_CAPTION_COLOR  -> paints the native title bar with the app colour
 #   * DWMWA_TEXT_COLOR     -> light text on that title bar
+# DWM takes COLORREF in 0x00BBGGRR order, not HTML RGB.
 #   * DWMWA_WINDOW_CORNER_PREFERENCE -> square corners (no light outline)
 # On Windows 10 all calls fail softly and the window is left untouched.
 
@@ -60,8 +61,9 @@ public static class AegisWindowPolisher
     private const int DWMWA_COLOR_NONE = unchecked((int)0xFFFFFFFE);
     private const int DWMWA_COLOR_DEFAULT = unchecked((int)0xFFFFFFFF);
 
-    private static int _caption = 0x090914;
-    private static int _text = 0xF3F0FF;
+    // COLORREF 0x00BBGGRR: #090914 -> 0x140909, #F3F0FF -> 0xFFF0F3.
+    private static int _caption = 0x140909;
+    private static int _text = 0xFFF0F3;
 
     public static IntPtr FindByTitle(string title)
     {
@@ -101,8 +103,8 @@ public static class AegisWindowPolisher
 
         var results = new System.Text.StringBuilder();
 
-        // 1) native dark title bar
-        Set(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, 1, results, "dark");
+        // 1) native dark title bar (attr 20 on Win10 2004+, 19 on older builds)
+        SetDark(hWnd, results);
         // 2) no light border around the window
         Set(hWnd, DWMWA_BORDER_COLOR, DWMWA_COLOR_NONE, results, "border");
         // 3) caption in app colour
@@ -115,17 +117,29 @@ public static class AegisWindowPolisher
         return results.ToString();
     }
 
+    private static void SetDark(IntPtr hWnd, System.Text.StringBuilder log)
+    {
+        int hr = SetValue(hWnd, DWMWA_USE_IMMERSIVE_DARK_MODE, 1);
+        if (hr != 0) hr = SetValue(hWnd, 19, 1); // older Win10 builds
+        log.Append("dark").Append(hr == 0 ? ":ok " : (":hr=" + hr + " "));
+    }
+
     private static void Set(IntPtr hWnd, int attr, int value, System.Text.StringBuilder log, string name)
+    {
+        int hr = SetValue(hWnd, attr, value);
+        log.Append(name).Append(hr == 0 ? ":ok " : (":hr=" + hr + " "));
+    }
+
+    private static int SetValue(IntPtr hWnd, int attr, int value)
     {
         int v = value;
         try
         {
-            int hr = DwmSetWindowAttribute(hWnd, attr, ref v, sizeof(int));
-            log.Append(name).Append(hr == 0 ? ":ok " : (":hr=" + hr + " "));
+            return DwmSetWindowAttribute(hWnd, attr, ref v, sizeof(int));
         }
-        catch (Exception ex)
+        catch
         {
-            log.Append(name).Append(":err=").Append(ex.Message).Append(' ');
+            return -1;
         }
     }
 }
@@ -144,6 +158,6 @@ if ($hwnd -eq [IntPtr]::Zero) {
     exit 1
 }
 
-$result = [AegisWindowPolisher]::Apply($hwnd, 0x090914, 0xF3F0FF)
+$result = [AegisWindowPolisher]::Apply($hwnd, 0x140909, 0xFFF0F3)
 Write-Output "polish: hwnd=$hwnd $result"
 exit 0

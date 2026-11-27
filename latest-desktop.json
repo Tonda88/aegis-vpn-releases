@@ -1,7 +1,7 @@
 {
-    "version":  "1.1.8",
-    "versionCode":  10,
-    "notes":  "Desktop 1.1.8: свёрнутое окно уходит в трей и больше не висит в панели задач; клик по иконке в трее или «Открыть Aegis VPN» возвращает окно. Плюс всё из 1.1.7: флаги новых стран, встроенный помощник рамки окна, авто-переподключение при смене сервера, исправленные названия.\n\nВерсия: 1.1.8 (versionCode 10).",
-    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.8/AegisVPN-Desktop-1.1.8-windows-x64.zip",
-    "sha256":  "3b4681a41d47eb89f9b78d38dbd071a17ec2897551b26d5525fed26a74e7b60c"
+    "version":  "1.1.9",
+    "versionCode":  11,
+    "notes":  "Desktop 1.1.9: новая иконка в стиле Android — тёмное стекло с мятным контуром щита и галочкой (приложение, трей, ярлыки). Исправлен тёмный заголовок окна: цвета DWM переведены в правильный COLORREF (BGR), поэтому светлой полосы сверху больше нет. Плюс всё из 1.1.8: свёрнутое окно уходит в трей без записи в панели задач.\n\nВерсия: 1.1.9 (versionCode 11).",
+    "url":  "https://github.com/Tonda88/aegis-vpn-releases/releases/download/desktop-v1.1.9/AegisVPN-Desktop-1.1.9-windows-x64.zip",
+    "sha256":  "fe42e58f0f4c45d569b5ff281c1e57aba77f91ed9102a87f8f41c77c7349be63"
 }
