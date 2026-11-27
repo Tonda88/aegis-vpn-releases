@@ -84,6 +84,7 @@ import com.aegis.vpn.data.ServerProfile
 import com.aegis.vpn.data.SettingsStore
 import com.aegis.vpn.data.VpnStatus
 import com.aegis.vpn.ui.components.AegisBottomBar
+import com.aegis.vpn.ui.components.AuroraBackground
 import com.aegis.vpn.ui.components.AppTab
 import com.aegis.vpn.ui.screens.AppsScreen
 import com.aegis.vpn.ui.screens.HomeScreen
@@ -464,16 +465,18 @@ private fun AegisApp(
             label = "tabs"
         ) { tab ->
             when (tab) {
-                AppTab.HOME -> HomeScreen(
-                    server = selectedServer,
-                    settings = settings,
-                    vpnState = vpnState,
-                    onConnect = connect,
-                    onDisconnect = { VpnController.disconnect(context) },
-                    onOpenServers = { tabIndex = AppTab.SERVERS.ordinal },
-                    onOpenApps = { tabIndex = AppTab.APPS.ordinal },
-                    onDismissError = { VpnStateHolder.disconnected() }
-                )
+                AppTab.HOME -> AuroraBackground(status = vpnState.status) {
+                    HomeScreen(
+                        server = selectedServer,
+                        settings = settings,
+                        vpnState = vpnState,
+                        onConnect = connect,
+                        onDisconnect = { VpnController.disconnect(context) },
+                        onOpenServers = { tabIndex = AppTab.SERVERS.ordinal },
+                        onOpenApps = { tabIndex = AppTab.APPS.ordinal },
+                        onDismissError = { VpnStateHolder.disconnected() }
+                    )
+                }
 
                 AppTab.SERVERS -> ServersScreen(
                     servers = servers,

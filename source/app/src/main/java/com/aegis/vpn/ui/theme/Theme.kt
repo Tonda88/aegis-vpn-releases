@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.ui.graphics.Color
 import com.aegis.vpn.data.AccentTheme
 
@@ -140,8 +141,12 @@ fun AegisTheme(
     CompositionLocalProvider(LocalAegisPalette provides palette) {
         MaterialTheme(
             colorScheme = colors,
-            typography = AegisTypography,
-            content = content
-        )
+            typography = AegisTypography
+        ) {
+            // Гарантируем Manrope и табличные цифры даже там, где стиль не задан явно.
+            CompositionLocalProvider(LocalTextStyle provides AegisTypography.bodyLarge) {
+                content()
+            }
+        }
     }
 }

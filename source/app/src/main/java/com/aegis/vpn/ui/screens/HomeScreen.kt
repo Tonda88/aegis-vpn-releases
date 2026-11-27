@@ -2,15 +2,22 @@ package com.aegis.vpn.ui.screens
 
 import com.aegis.vpn.ui.theme.AppColors
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -27,7 +35,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,14 +49,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.roundToInt
 import com.aegis.vpn.R
 import com.aegis.vpn.data.AppSettings
 import com.aegis.vpn.data.ServerProfile
@@ -425,73 +440,157 @@ private fun PowerButton(
         VpnStatus.ERROR -> AppColors.danger
         VpnStatus.DISCONNECTED -> if (hasServer) AppColors.accent else AppColors.blue
     }
-    val active = status == VpnStatus.CONNECTED || status == VpnStatus.CONNECTING
+    val connected = status == VpnStatus.CONNECTED
+    val busy = status == VpnStatus.CONNECTING || status == VpnStatus.STOPPING
+    val failed = status == VpnStatus.ERROR
+
     val infinite = rememberInfiniteTransition(label = "connection-pulse")
     val pulse by infinite.animateFloat(
-        initialValue = 0.22f,
-        targetValue = if (active) 0.95f else 0.55f,
+        initialValue = 0f,
+        targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(if (active) 1600 else 2600),
+            animation = tween(if (connected) 2200 else 3000),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulse"
     )
+    val spin by infinite.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1400, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "arc-spin"
+    )
+
+    // Короткая «отдача» кнопки, если подключиться не удалось.
+    val shake = remember { Animatable(0f) }
+    LaunchedEffect(status) {
+        if (status == VpnStatus.ERROR) {
+            shake.snapTo(0f)
+            shake.animateTo(
+                targetValue = 1f,
+                animationSpec = keyframes {
+                    durationMillis = 520
+                    0f at 0
+                    -1f at 70
+                    1f at 140
+                    -0.75f at 210
+                    0.75f at 280
+                    -0.35f at 350
+                    0.35f at 420
+                    0f at 520
+                }
+            )
+        }
+    }
+
+    val haptics = LocalHapticFeedback.current
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val pressScale by animateFloatAsState(
+        targetValue = if (pressed) 0.955f else 1f,
+        animationSpec = spring(dampingRatio = 0.55f, stiffness = 800f),
+        label = "power-press"
+    )
+
+    val haloAlpha = when {
+        connected -> 0.22f + 0.12f * pulse
+        busy -> 0.20f
+        failed -> 0.22f
+        else -> 0.12f
+    }
+    val iconColor = when {
+        connected -> Color(0xFF06231C)
+        failed -> AppColors.danger
+        busy -> accent
+        hasServer -> AppColors.textPrimary
+        else -> AppColors.textSecondary
+    }
 
     Box(
-        modifier = Modifier.size(268.dp),
+        modifier = Modifier
+            .size(268.dp)
+            .offset { IntOffset((shake.value * 11.dp.toPx()).roundToInt(), 0) },
         contentAlignment = Alignment.Center
     ) {
         Canvas(Modifier.fillMaxSize()) {
-            val center = this.center
-            val outerRadius = size.minDimension / 2f
+            val c = center
+            val outer = size.minDimension / 2f
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(accent.copy(alpha = 0.18f), Color.Transparent),
-                    center = center,
-                    radius = outerRadius
+                    colors = listOf(accent.copy(alpha = haloAlpha), Color.Transparent),
+                    center = c,
+                    radius = outer
                 ),
-                radius = outerRadius,
-                center = center
+                radius = outer,
+                center = c
             )
+            if (connected) {
+                drawCircle(
+                    color = accent.copy(alpha = 0.10f + 0.20f * pulse),
+                    radius = outer * (0.74f + 0.20f * pulse),
+                    center = c,
+                    style = Stroke(width = 1.4.dp.toPx())
+                )
+            }
             drawCircle(
-                color = accent.copy(alpha = 0.18f + 0.12f * (1f - pulse)),
-                radius = outerRadius * (0.72f + 0.23f * pulse),
-                center = center,
-                style = Stroke(width = 1.3.dp.toPx())
-            )
-            drawCircle(
-                color = Color.White.copy(alpha = 0.045f),
-                radius = outerRadius * 0.77f,
-                center = center
-            )
-            drawCircle(
-                color = Color.White.copy(alpha = 0.06f),
-                radius = outerRadius * 0.77f,
-                center = center,
+                color = if (busy) accent.copy(alpha = 0.16f) else Color.White.copy(alpha = 0.05f),
+                radius = outer * 0.735f,
+                center = c,
                 style = Stroke(width = 1.dp.toPx())
             )
+            if (busy) {
+                val r = outer * 0.735f
+                drawArc(
+                    color = accent.copy(alpha = 0.20f),
+                    startAngle = 0f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    topLeft = Offset(c.x - r, c.y - r),
+                    size = Size(r * 2f, r * 2f),
+                    style = Stroke(width = 3.dp.toPx())
+                )
+                drawArc(
+                    color = accent,
+                    startAngle = spin,
+                    sweepAngle = 100f,
+                    useCenter = false,
+                    topLeft = Offset(c.x - r, c.y - r),
+                    size = Size(r * 2f, r * 2f),
+                    style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
+                )
+            }
         }
 
         Box(
             modifier = Modifier
                 .size(164.dp)
+                .graphicsLayer {
+                    scaleX = pressScale
+                    scaleY = pressScale
+                }
                 .shadow(
-                    elevation = if (active) 42.dp else 22.dp,
+                    elevation = if (connected) 42.dp else 22.dp,
                     shape = CircleShape,
-                    ambientColor = accent.copy(alpha = 0.55f),
-                    spotColor = accent.copy(alpha = 0.55f)
+                    ambientColor = accent.copy(alpha = if (connected) 0.55f else 0.25f),
+                    spotColor = accent.copy(alpha = if (connected) 0.55f else 0.25f)
                 )
                 .clip(CircleShape)
                 .background(
-                    if (active) {
+                    if (connected) {
                         Brush.linearGradient(
-                            listOf(accent.copy(alpha = 0.95f), AppColors.blue.copy(alpha = 0.9f)),
+                            listOf(accent, lerp(accent, Color.Black, 0.28f)),
                             start = Offset.Zero,
                             end = Offset.Infinite
                         )
                     } else {
                         Brush.linearGradient(
-                            listOf(AppColors.surfaceHigh, Color(0xFF131D2F)),
+                            listOf(
+                                lerp(AppColors.surfaceHigh, accent, if (busy || failed) 0.10f else 0f),
+                                Color(0xFF0E1728)
+                            ),
                             start = Offset.Zero,
                             end = Offset.Infinite
                         )
@@ -499,43 +598,46 @@ private fun PowerButton(
                 )
                 .border(
                     width = 1.dp,
-                    color = if (active) Color.White.copy(alpha = 0.34f) else accent.copy(alpha = 0.55f),
+                    color = when {
+                        connected -> Color.White.copy(alpha = 0.32f)
+                        busy || failed -> accent.copy(alpha = 0.45f)
+                        else -> Color.White.copy(alpha = 0.10f)
+                    },
                     shape = CircleShape
                 )
-                .clickable(onClick = onClick),
+                .clickable(
+                    interactionSource = interaction,
+                    indication = null
+                ) {
+                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onClick()
+                },
             contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (status == VpnStatus.CONNECTING || status == VpnStatus.STOPPING) {
-                    CircularProgressIndicator(
-                        color = if (active) Color(0xFF07100E) else accent,
-                        strokeWidth = 2.5.dp,
-                        modifier = Modifier.size(48.dp)
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_power),
-                        contentDescription = null,
-                        tint = if (active) Color(0xFF06100E) else accent,
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = when (status) {
-                        VpnStatus.CONNECTED -> "ОТКЛЮЧИТЬ"
-                        VpnStatus.CONNECTING -> "ОТМЕНА"
-                        VpnStatus.STOPPING -> "ЖДИТЕ"
-                        VpnStatus.ERROR -> "ПОВТОРИТЬ"
-                        VpnStatus.DISCONNECTED -> if (hasServer) "ПОДКЛЮЧИТЬ" else "НАЧАТЬ"
-                    },
-                    color = if (active) Color(0xFF06100E) else AppColors.textPrimary,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.1.sp
-                )
-            }
+            Icon(
+                painter = painterResource(R.drawable.ic_power),
+                contentDescription = null,
+                tint = iconColor,
+                modifier = Modifier.size(52.dp)
+            )
         }
+
+        Text(
+            text = when (status) {
+                VpnStatus.CONNECTED -> "ОТКЛЮЧИТЬ"
+                VpnStatus.CONNECTING -> "ОТМЕНИТЬ"
+                VpnStatus.STOPPING -> "ЖДИТЕ"
+                VpnStatus.ERROR -> "ПОВТОРИТЬ"
+                VpnStatus.DISCONNECTED -> if (hasServer) "ПОДКЛЮЧИТЬ" else "НАЧАТЬ"
+            },
+            color = if (failed) AppColors.danger else AppColors.textSecondary,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.ExtraBold,
+            letterSpacing = 1.6.sp,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset(y = 104.dp)
+        )
     }
 }
 
