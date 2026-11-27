@@ -145,14 +145,23 @@ fun HomeScreen(
                     Modifier
                         .size(46.dp)
                         .clip(RoundedCornerShape(15.dp))
-                        .background(Brush.linearGradient(listOf(AppColors.accent, AppColors.blue))),
+                        .background(
+                            Brush.radialGradient(
+                                listOf(Color(0xFF1D2942), Color(0xFF0A0F1C))
+                            )
+                        )
+                        .border(
+                            1.dp,
+                            AppColors.accent.copy(alpha = 0.22f),
+                            RoundedCornerShape(15.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_shield),
+                        painter = painterResource(R.drawable.ic_logo_mark),
                         contentDescription = null,
-                        tint = Color(0xFF06100E),
-                        modifier = Modifier.size(27.dp)
+                        tint = AppColors.accent,
+                        modifier = Modifier.size(42.dp)
                     )
                 }
                 Spacer(Modifier.width(12.dp))

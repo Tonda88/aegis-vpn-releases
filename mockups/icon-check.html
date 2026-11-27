@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Aegis VPN — проверка иконки</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;padding:34px 40px 60px;background:#05070d;color:#F2F6FF;
+       font-family:'Manrope',system-ui,sans-serif;
+       background-image:radial-gradient(700px 500px at 10% -10%, rgba(84,230,193,.08), transparent 60%)}
+  h1{font-size:26px;margin:0 0 6px;font-weight:800;letter-spacing:-.02em}
+  p.sub{margin:0 0 30px;color:#8D9AB4;font-size:13.5px;line-height:1.6;max-width:760px}
+  .section{margin-bottom:38px}
+  h2{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8D9AB4;margin:0 0 16px;font-weight:800}
+  .row{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap}
+  .item{text-align:center}
+  .item .cap{font-size:10px;color:#66738c;margin-top:8px;letter-spacing:.04em}
+  .canvas{position:relative;display:inline-block}
+  .canvas svg{display:block}
+  .mask-circle{clip-path:circle(33.33% at 50% 50%)}
+  .mask-squircle{clip-path:inset(0 round 24%)}
+  .home{display:inline-flex;gap:22px;padding:26px 30px;border-radius:26px;
+        background:linear-gradient(160deg,#121a2b,#070b14);border:1px solid rgba(255,255,255,.06)}
+  .home .label{font-size:9px;color:#5d6a84;text-align:center;margin-top:7px}
+  .header{display:inline-flex;align-items:center;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(9,13,24,.8);border:1px solid rgba(255,255,255,.05)}
+  .header .brand b{display:block;font-size:14px;font-weight:800;letter-spacing:.16em}
+  .header .brand span{display:block;font-size:10.5px;color:#8D9AB4;margin-top:2px}
+</style>
+</head>
+<body>
+
+<h1>Проверка новой иконки</h1>
+<p class="sub">Точная геометрия из векторов приложения: тёмное стекло, мятный контур щита и галочка.
+Показаны круглая маска Android (66% площади), скруглённая, размеры дока и шапка приложения.</p>
+
+<div class="section">
+  <h2>Adaptive icon · круглая маска</h2>
+  <div class="row">
+    <div class="item">
+      <div class="canvas mask-circle">
+        <svg width="96" height="96" viewBox="0 0 108 108">
+          <defs>
+            <radialGradient id="bg" cx="34" cy="26" r="120" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#1D2942"/><stop offset=".55" stop-color="#101827"/><stop offset="1" stop-color="#070B14"/>
+            </radialGradient>
+            <radialGradient id="glow" cx="54" cy="58" r="46" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#54E6C1" stop-opacity=".18"/><stop offset="1" stop-color="#54E6C1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="108" height="108" fill="url(#bg)"/>
+          <rect width="108" height="108" fill="url(#glow)"/>
+          <g transform="translate(18,20.325) scale(1.5)">
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+            <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap">96 px</div>
+    </div>
+    <div class="item">
+      <div class="canvas mask-circle">
+        <svg width="64" height="64" viewBox="0 0 108 108">
+          <rect width="108" height="108" fill="url(#bg)"/><rect width="108" height="108" fill="url(#glow)"/>
+          <g transform="translate(18,20.325) scale(1.5)">
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+            <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap">64 px</div>
+    </div>
+    <div class="item">
+      <div class="canvas mask-circle">
+        <svg width="44" height="44" viewBox="0 0 108 108">
+          <rect width="108" height="108" fill="url(#bg)"/><rect width="108" height="108" fill="url(#glow)"/>
+          <g transform="translate(18,20.325) scale(1.5)">
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+            <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap">44 px</div>
+    </div>
+    <div class="item">
+      <div class="canvas mask-squircle">
+        <svg width="96" height="96" viewBox="0 0 108 108">
+          <rect width="108" height="108" fill="url(#bg)"/><rect width="108" height="108" fill="url(#glow)"/>
+          <g transform="translate(18,20.325) scale(1.5)">
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+            <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+            <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </div>
+      <div class="cap">96 px · squircle</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Legacy icon · API &lt; 26</h2>
+  <div class="row">
+    <div class="item">
+      <svg width="96" height="96" viewBox="0 0 108 108">
+        <rect width="108" height="108" rx="24" fill="url(#bg)"/>
+        <rect width="108" height="108" rx="24" fill="url(#glow)"/>
+        <rect x=".7" y=".7" width="106.6" height="106.6" rx="24" fill="none" stroke="#54E6C1" stroke-opacity=".23" stroke-width="1.4"/>
+        <g transform="translate(8.4,11.345) scale(1.9)">
+          <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+          <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+          <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="cap">скруглённая</div>
+    </div>
+    <div class="item">
+      <svg width="96" height="96" viewBox="0 0 108 108">
+        <defs>
+          <clipPath id="roundclip"><circle cx="54" cy="54" r="53"/></clipPath>
+        </defs>
+        <g clip-path="url(#roundclip)">
+          <rect width="108" height="108" fill="url(#bg)"/>
+          <rect width="108" height="108" fill="url(#glow)"/>
+        </g>
+        <circle cx="54" cy="54" r="52.3" fill="none" stroke="#54E6C1" stroke-opacity=".23" stroke-width="1.4"/>
+        <g transform="translate(10.8,13.59) scale(1.8)">
+          <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-opacity=".2" stroke-width="9" stroke-linejoin="round"/>
+          <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+          <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+      <div class="cap">круглая</div>
+    </div>
+    <div class="item">
+      <div class="home">
+        <div>
+          <svg width="64" height="64" viewBox="0 0 108 108" style="border-radius:16px">
+            <rect width="108" height="108" fill="url(#bg)"/>
+            <rect width="108" height="108" fill="url(#glow)"/>
+            <g transform="translate(8.4,11.345) scale(1.9)">
+              <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+              <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </svg>
+          <div class="label">Aegis VPN</div>
+        </div>
+      </div>
+      <div class="cap">на рабочем столе</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Шапка приложения</h2>
+  <div class="header">
+    <svg width="46" height="46" viewBox="0 0 48 48" style="border-radius:15px;background:radial-gradient(circle at 45% 40%, #1D2942, #0A0F1C)">
+      <rect x=".6" y=".6" width="46.8" height="46.8" rx="15" fill="none" stroke="#54E6C1" stroke-opacity=".22" stroke-width="1.2"/>
+      <g transform="translate(3.5,3.9) scale(1.06)">
+        <path d="M24,4.5l14.5,5.8v12.2c0,9.2 -6,16.7 -14.5,19.9C15.5,39.2 9.5,31.7 9.5,22.5V10.3z" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linejoin="round"/>
+        <path d="M17.4,23.6l4.9,4.9 9.4,-10" fill="none" stroke="#54E6C1" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </svg>
+    <div class="brand"><b>AEGIS VPN</b><span>приватность без компромиссов</span></div>
+  </div>
+</div>
+
+</body>
+</html>
